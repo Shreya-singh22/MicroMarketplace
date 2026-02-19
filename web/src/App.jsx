@@ -1,50 +1,41 @@
+```javascript
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import { CartProvider } from './context/CartContext';
+import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProductDetails from './pages/ProductDetails';
-import Favorites from './pages/Favorites';
-import Navbar from './components/Navbar';
-
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
-  return children;
-};
-
-function AppRoutes() {
-  return (
-    <>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/favorites" element={
-          <ProtectedRoute>
-            <Favorites />
-          </ProtectedRoute>
-        } />
-      </Routes>
-    </>
-  );
-}
-
-import { ToastProvider } from './context/ToastContext';
+import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
+        <CartProvider>
+          <Router>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/product/:id" element={<ProductDetails />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                </Routes>
+              </main>
+            </div>
+          </Router>
+        </CartProvider>
       </ToastProvider>
     </AuthProvider>
   );
 }
 
 export default App;
+```

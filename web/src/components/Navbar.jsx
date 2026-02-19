@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { FaHeart, FaUser, FaSignOutAlt, FaShoppingBag, FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
+    const { cartCount } = useCart();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -36,8 +38,16 @@ const Navbar = () => {
                         </Link>
                         {user ? (
                             <>
+                                <Link to="/cart" className="relative text-gray-600 hover:text-indigo-600 transition-colors">
+                                    <FaShoppingBag className="text-xl" />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </Link>
                                 <Link to="/favorites" className="text-gray-600 hover:text-red-500 font-medium transition-colors flex items-center gap-2">
-                                    <FaHeart /> Favorites
+                                    <FaHeart className="text-xl" />
                                 </Link>
                                 <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
                                     <div className="flex items-center text-gray-700 font-medium">
@@ -96,11 +106,25 @@ const Navbar = () => {
                         {user ? (
                             <>
                                 <Link
+                                    to="/cart"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 flex justify-between items-center"
+                                >
+                                    <span>
+                                        <FaShoppingBag className="inline-block mr-2" /> Cart
+                                    </span>
+                                    {cartCount > 0 && (
+                                        <span className="bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </Link>
+                                <Link
                                     to="/favorites"
                                     onClick={() => setIsMenuOpen(false)}
                                     className="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-red-500 hover:bg-red-50"
                                 >
-                                    Favorites
+                                    <FaHeart className="inline-block mr-2" /> Favorites
                                 </Link>
                                 <div className="px-3 py-3 border-t border-gray-100 mt-2">
                                     <div className="flex items-center text-gray-700 font-medium mb-3">

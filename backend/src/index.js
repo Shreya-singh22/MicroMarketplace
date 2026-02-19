@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const favoriteRoutes = require('./routes/favorites');
+const cartRoutes = require('./routes/cart');
 
 dotenv.config();
 

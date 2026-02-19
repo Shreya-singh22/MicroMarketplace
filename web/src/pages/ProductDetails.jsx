@@ -4,14 +4,17 @@ import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { FaHeart, FaArrowLeft, FaStar, FaShoppingCart, FaTruck, FaShieldAlt } from 'react-icons/fa';
 import { useToast } from '../context/ToastContext';
+import { useCart } from '../context/CartContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const { user } = useAuth();
     const { showToast } = useToast();
+    const { addToCart } = useCart();
     const [isFavorite, setIsFavorite] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [addingToCart, setAddingToCart] = useState(false);
 
     useEffect(() => {
         fetchProduct();
@@ -109,8 +112,8 @@ const ProductDetails = () => {
                                 <button
                                     onClick={toggleFavorite}
                                     className={`p-3 rounded-full transition-all duration-300 transform active:scale-90 shadow-sm border ${isFavorite
-                                            ? 'bg-red-50 border-red-100 text-red-500'
-                                            : 'bg-white border-gray-100 text-gray-400 hover:text-red-500 hover:border-red-100'
+                                        ? 'bg-red-50 border-red-100 text-red-500'
+                                        : 'bg-white border-gray-100 text-gray-400 hover:text-red-500 hover:border-red-100'
                                         }`}
                                 >
                                     <FaHeart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />

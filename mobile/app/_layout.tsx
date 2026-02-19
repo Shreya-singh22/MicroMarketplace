@@ -1,44 +1,52 @@
-import { Stack } from 'expo-router';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { AuthProvider } from '../context/AuthContext';
-import { TouchableOpacity, Text } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { useRouter } from 'expo-router';
-
-// Separate component to use hook inside provider
-function StackLayout() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
-
-  return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          title: 'MicroMarket',
-          headerRight: () => (
-            user ? (
-              <TouchableOpacity onPress={() => router.push('/favorites')} style={{ marginRight: 10 }}>
-                <Text style={{ color: '#007AFF', fontSize: 16 }}>Favorites</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={() => router.push('/login')} style={{ marginRight: 10 }}>
-                <Text style={{ color: '#007AFF', fontSize: 16 }}>Login</Text>
-              </TouchableOpacity>
-            )
-          ),
-        }}
-      />
-      <Stack.Screen name="login" options={{ title: 'Login' }} />
-      <Stack.Screen name="product/[id]" options={{ title: 'Details' }} />
-      <Stack.Screen name="favorites" options={{ title: 'Favorites' }} />
-    </Stack>
-  );
-}
 
 export default function Layout() {
   return (
     <AuthProvider>
-      <StackLayout />
+      <Tabs screenOptions={{ tabBarActiveTintColor: '#4F46E5', headerShown: false }}>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="favorites"
+          options={{
+            title: 'Favorites',
+            tabBarIcon: ({ color }) => <Ionicons name="heart" size={24} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="cart"
+          options={{
+            title: 'Cart',
+            tabBarIcon: ({ color }) => <Ionicons name="cart" size={24} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="login"
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ color }) => <Ionicons name="person" size={24} color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="product/[id]"
+          options={{
+            href: null, // Hide from tab bar
+          }}
+        />
+        <Tabs.Screen
+          name="register"
+          options={{
+            href: null, // Hide from tab bar
+          }}
+        />
+      </Tabs>
     </AuthProvider>
   );
 }

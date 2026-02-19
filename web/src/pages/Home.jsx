@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
-import { FaSearch, FaHeart, FaArrowRight, FaStar } from 'react-icons/fa';
+import { FaSearch, FaHeart, FaArrowRight, FaStar, FaShoppingCart } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useCart } from '../context/CartContext';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -12,6 +13,7 @@ const Home = () => {
     const [totalPages, setTotalPages] = useState(1);
     const { user } = useAuth();
     const { showToast } = useToast();
+    const { addToCart } = useCart();
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -128,8 +130,8 @@ const Home = () => {
                                         <button
                                             onClick={(e) => toggleFavorite(e, product.id)}
                                             className={`absolute top-3 right-3 p-2.5 rounded-full shadow-md transition-all duration-300 transform hover:scale-110 z-10 ${favorites.includes(product.id)
-                                                    ? 'bg-white text-red-500'
-                                                    : 'bg-white/90 text-gray-400 hover:text-red-500'
+                                                ? 'bg-white text-red-500'
+                                                : 'bg-white/90 text-gray-400 hover:text-red-500'
                                                 }`}
                                         >
                                             <FaHeart className={`w-5 h-5 ${favorites.includes(product.id) ? 'fill-current' : ''}`} />
