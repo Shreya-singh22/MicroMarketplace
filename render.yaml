@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: micromarket-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: file:./dev.db
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/backend/prisma
+      sizeGB: 1
