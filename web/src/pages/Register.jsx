@@ -21,12 +21,15 @@ const Register = () => {
             showToast('Account created successfully!', 'success');
             navigate('/');
         } catch (err) {
+            console.error('Registration Error:', err);
             // Check if error is from Zod validation (array of errors) or simple string
             const errorMessage = err.response?.data?.error;
             if (Array.isArray(errorMessage)) {
                 showToast(errorMessage[0].message, 'error'); // Show first validation error
+            } else if (err.message === 'Network Error') {
+                showToast('Cannot connect to server. Please check your internet or backend URL.', 'error');
             } else {
-                showToast(errorMessage || 'Registration failed', 'error');
+                showToast(errorMessage || `Registration failed: ${err.message}`, 'error');
             }
         } finally {
             setIsLoading(false);
