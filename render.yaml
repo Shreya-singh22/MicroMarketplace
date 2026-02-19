@@ -4,7 +4,8 @@ services:
     env: node
     rootDir: backend
     buildCommand: npm install && npx prisma generate
-    startCommand: npm start
+    startCommand: npx prisma db push && node prisma/seed.js && npm start
+    plan: free
     envVars:
       - key: JWT_SECRET
         generateValue: true
