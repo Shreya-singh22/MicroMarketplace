@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { FaHeart, FaArrowLeft, FaStar, FaShoppingCart, FaTruck, FaShieldAlt } from 'react-icons/fa';
@@ -12,6 +12,7 @@ const ProductDetails = () => {
     const { user } = useAuth();
     const { showToast } = useToast();
     const { addToCart } = useCart();
+    const navigate = useNavigate();
     const [isFavorite, setIsFavorite] = useState(false);
     const [loading, setLoading] = useState(true);
     const [addingToCart, setAddingToCart] = useState(false);
@@ -59,6 +60,19 @@ const ProductDetails = () => {
             console.error('Error toggling favorite:', error);
             showToast('Failed to update favorite', 'error');
         }
+    };
+
+    const handleAddToCart = async () => {
+        setAddingToCart(true);
+        await addToCart(parseInt(id), 1);
+        setAddingToCart(false);
+    };
+
+    const handleBuyNow = async () => {
+        setAddingToCart(true);
+        await addToCart(parseInt(id), 1);
+        setAddingToCart(false);
+        navigate('/cart');
     };
 
     if (loading) {
@@ -145,10 +159,16 @@ const ProductDetails = () => {
                             </div>
 
                             <div className="mt-auto flex flex-col sm:flex-row gap-4">
-                                <button className="flex-1 bg-indigo-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg hover:shadow-indigo-200 hover:-translate-y-1 flex items-center justify-center gap-2">
-                                    <FaShoppingCart /> Add to Cart
+                                <button
+                                    onClick={handleAddToCart}
+                                    disabled={addingToCart}
+                                    className="flex-1 bg-indigo-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg hover:shadow-indigo-200 hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-wait">
+                                    {addingToCart ? <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div> : <><FaShoppingCart /> Add to Cart</>}
                                 </button>
-                                <button className="flex-1 bg-white text-indigo-600 border-2 border-indigo-600 py-4 px-6 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-colors flex items-center justify-center">
+                                <button
+                                    onClick={handleBuyNow}
+                                    disabled={addingToCart}
+                                    className="flex-1 bg-white text-indigo-600 border-2 border-indigo-600 py-4 px-6 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-colors flex items-center justify-center disabled:opacity-75 disabled:cursor-wait">
                                     Buy Now
                                 </button>
                             </div>

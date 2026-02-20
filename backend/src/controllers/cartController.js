@@ -136,20 +136,58 @@ exports.removeFromCart = async (req, res) => {
     }
 };
 
-// Checkout (Clear Cart)
+// Checkout (Create Order and Clear Cart)
 exports.checkout = async (req, res) => {
     const userId = req.user.userId;
     try {
-        const cart = await prisma.cart.findUnique({ where: { userId } });
-        if (!cart) return res.status(400).json({ error: 'Cart is empty' });
-
-        // In a real app, create Order record here.
-        // For now, just clear the cart.
-        await prisma.cartItem.deleteMany({
-            where: { cartId: cart.id }
+        const cart = await prisma.cart.findUnique({
+            where: { userId },
+            include: {
+                items: {
+                    include: { product: true }
+                }
+            }
         });
 
-        res.json({ message: 'Order placed successfully', orderId: `ORDER-${Date.now()}` });
+        if (!cart || cart.items.length === 0) {
+            return res.status(400).json({ error: 'Cart is empty' });
+        }
+
+        // Calculate total amount
+        const totalAmount = cart.items.reduce((total, item) => {
+            return total + (item.product.price * item.quantity);
+        }, 0);
+
+        // Create Order and OrderItems in a transaction
+        const order = await prisma.$transaction(async (tx) => {
+            // 1. Create the order
+            const newOrder = await tx.order.create({
+                data: {
+                    userId,
+                    totalAmount,
+                    status: 'COMPLETED',
+                    items: {
+                        create: cart.items.map(item => ({
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            price: item.product.price
+                        }))
+                    }
+                },
+                include: {
+                    items: true
+                }
+            });
+
+            // 2. Clear the cart
+            await tx.cartItem.deleteMany({
+                where: { cartId: cart.id }
+            });
+
+            return newOrder;
+        });
+
+        res.json({ message: 'Order placed successfully', order });
     } catch (error) {
         console.error('Checkout Error:', error);
         res.status(500).json({ error: 'Failed to process checkout' });

@@ -50,12 +50,12 @@ const Navbar = () => {
                                     <FaHeart className="text-xl" />
                                 </Link>
                                 <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
-                                    <div className="flex items-center text-gray-700 font-medium">
+                                    <Link to="/profile" className="flex items-center text-gray-700 font-medium hover:text-indigo-600 transition-colors">
                                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mr-2">
                                             <FaUser />
                                         </div>
                                         {user.name}
-                                    </div>
+                                    </Link>
                                     <button
                                         onClick={handleLogout}
                                         className="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
@@ -127,10 +127,10 @@ const Navbar = () => {
                                     <FaHeart className="inline-block mr-2" /> Favorites
                                 </Link>
                                 <div className="px-3 py-3 border-t border-gray-100 mt-2">
-                                    <div className="flex items-center text-gray-700 font-medium mb-3">
+                                    <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center text-gray-700 font-medium mb-3 hover:text-indigo-600">
                                         <FaUser className="mr-2 text-indigo-600" />
                                         {user.name}
-                                    </div>
+                                    </Link>
                                     <button
                                         onClick={handleLogout}
                                         className="w-full text-left flex items-center text-red-500 font-medium"

@@ -5,6 +5,7 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const favoriteRoutes = require('./routes/favorites');
 const cartRoutes = require('./routes/cart');
+const orderRoutes = require('./routes/orders');
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/favorites', favoriteRoutes);
 app.use('/cart', cartRoutes);
+app.use('/orders', orderRoutes);
 
 app.get('/', (req, res) => {
   res.send('Micro Marketplace API is running');
