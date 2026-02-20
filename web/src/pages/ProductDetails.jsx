@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { FaHeart, FaArrowLeft, FaStar, FaShoppingCart, FaTruck, FaShieldAlt } from 'react-icons/fa';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -12,17 +13,14 @@ const ProductDetails = () => {
     const { user } = useAuth();
     const { showToast } = useToast();
     const { addToCart } = useCart();
+    const { isFavorite: contextIsFavorite, toggleFavorite: contextToggleFavorite } = useFavorites();
     const navigate = useNavigate();
-    const [isFavorite, setIsFavorite] = useState(false);
     const [loading, setLoading] = useState(true);
     const [addingToCart, setAddingToCart] = useState(false);
 
     useEffect(() => {
         fetchProduct();
-        if (user) {
-            checkFavorite();
-        }
-    }, [id, user]);
+    }, [id]);
 
     const fetchProduct = async () => {
         setLoading(true);
@@ -37,29 +35,8 @@ const ProductDetails = () => {
         }
     };
 
-    const checkFavorite = async () => {
-        try {
-            const response = await axios.get('/favorites');
-            const favorites = response.data;
-            setIsFavorite(favorites.some(fav => fav.id === parseInt(id)));
-        } catch (error) {
-            console.error('Error checking favorite:', error);
-        }
-    };
-
-    const toggleFavorite = async () => {
-        if (!user) {
-            showToast('Please login to add favorites', 'info');
-            return;
-        }
-        try {
-            await axios.post('/favorites', { productId: parseInt(id) });
-            setIsFavorite(!isFavorite);
-            showToast(!isFavorite ? 'Added to favorites' : 'Removed from favorites', 'success');
-        } catch (error) {
-            console.error('Error toggling favorite:', error);
-            showToast('Failed to update favorite', 'error');
-        }
+    const handleFavoriteClick = async () => {
+        await contextToggleFavorite(parseInt(id));
     };
 
     const handleAddToCart = async () => {
@@ -124,13 +101,13 @@ const ProductDetails = () => {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={toggleFavorite}
-                                    className={`p-3 rounded-full transition-all duration-300 transform active:scale-90 shadow-sm border ${isFavorite
+                                    onClick={handleFavoriteClick}
+                                    className={`p-3 rounded-full transition-all duration-300 transform active:scale-90 shadow-sm border ${contextIsFavorite(parseInt(id))
                                         ? 'bg-red-50 border-red-100 text-red-500'
                                         : 'bg-white border-gray-100 text-gray-400 hover:text-red-500 hover:border-red-100'
                                         }`}
                                 >
-                                    <FaHeart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />
+                                    <FaHeart className={`w-6 h-6 ${contextIsFavorite(parseInt(id)) ? 'fill-current' : ''}`} />
                                 </button>
                             </div>
 

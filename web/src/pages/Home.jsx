@@ -5,6 +5,7 @@ import { FaSearch, FaHeart, FaArrowRight, FaStar, FaShoppingCart } from 'react-i
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -14,15 +15,12 @@ const Home = () => {
     const { user } = useAuth();
     const { showToast } = useToast();
     const { addToCart } = useCart();
-    const [favorites, setFavorites] = useState([]);
+    const { isFavorite, toggleFavorite: contextToggleFavorite } = useFavorites();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchProducts();
-        if (user) {
-            fetchFavorites();
-        }
-    }, [page, search, user]);
+    }, [page, search]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -38,30 +36,9 @@ const Home = () => {
         }
     };
 
-    const fetchFavorites = async () => {
-        try {
-            const response = await axios.get('/favorites');
-            setFavorites(response.data.map(product => product.id));
-        } catch (error) {
-            console.error('Error fetching favorites:', error);
-        }
-    };
-
-    const toggleFavorite = async (e, productId) => {
-        e.preventDefault(); // Prevent navigation to product details
-        if (!user) {
-            showToast('Please login to add favorites', 'info');
-            return;
-        }
-        try {
-            await axios.post('/favorites', { productId });
-            await fetchFavorites();
-            const isFav = favorites.includes(productId);
-            showToast(isFav ? 'Removed from favorites' : 'Added to favorites', 'success');
-        } catch (error) {
-            console.error('Error toggling favorite:', error);
-            showToast('Failed to update favorite', 'error');
-        }
+    const handleFavoriteClick = async (e, productId) => {
+        e.preventDefault();
+        await contextToggleFavorite(productId);
     };
 
     return (
@@ -128,13 +105,13 @@ const Home = () => {
                                             onError={(e) => { e.target.src = 'https://via.placeholder.com/400?text=No+Image'; }}
                                         />
                                         <button
-                                            onClick={(e) => toggleFavorite(e, product.id)}
-                                            className={`absolute top-3 right-3 p-2.5 rounded-full shadow-md transition-all duration-300 transform hover:scale-110 z-10 ${favorites.includes(product.id)
+                                            onClick={(e) => handleFavoriteClick(e, product.id)}
+                                            className={`absolute top-3 right-3 p-2.5 rounded-full shadow-md transition-all duration-300 transform hover:scale-110 z-10 ${isFavorite(product.id)
                                                 ? 'bg-white text-red-500'
                                                 : 'bg-white/90 text-gray-400 hover:text-red-500'
                                                 }`}
                                         >
-                                            <FaHeart className={`w-5 h-5 ${favorites.includes(product.id) ? 'fill-current' : ''}`} />
+                                            <FaHeart className={`w-5 h-5 ${isFavorite(product.id) ? 'fill-current' : ''}`} />
                                         </button>
 
                                         {/* Quick Add Overlay */}

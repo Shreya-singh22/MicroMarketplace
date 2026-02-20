@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
 import { FaHeart, FaUser, FaSignOutAlt, FaShoppingBag, FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
+    const { favoritesCount } = useFavorites();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -46,8 +48,13 @@ const Navbar = () => {
                                         </span>
                                     )}
                                 </Link>
-                                <Link to="/favorites" className="text-gray-600 hover:text-red-500 font-medium transition-colors flex items-center gap-2">
+                                <Link to="/favorites" className="relative text-gray-600 hover:text-red-500 font-medium transition-colors flex items-center gap-2">
                                     <FaHeart className="text-xl" />
+                                    {favoritesCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-white">
+                                            {favoritesCount}
+                                        </span>
+                                    )}
                                 </Link>
                                 <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
                                     <Link to="/profile" className="flex items-center text-gray-700 font-medium hover:text-indigo-600 transition-colors">
@@ -122,9 +129,16 @@ const Navbar = () => {
                                 <Link
                                     to="/favorites"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-red-500 hover:bg-red-50"
+                                    className="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-red-500 hover:bg-red-50 flex justify-between items-center"
                                 >
-                                    <FaHeart className="inline-block mr-2" /> Favorites
+                                    <span>
+                                        <FaHeart className="inline-block mr-2" /> Favorites
+                                    </span>
+                                    {favoritesCount > 0 && (
+                                        <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">
+                                            {favoritesCount}
+                                        </span>
+                                    )}
                                 </Link>
                                 <div className="px-3 py-3 border-t border-gray-100 mt-2">
                                     <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center text-gray-700 font-medium mb-3 hover:text-indigo-600">

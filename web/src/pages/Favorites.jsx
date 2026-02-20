@@ -3,30 +3,23 @@ import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { FaHeart } from 'react-icons/fa';
 
+import { useFavorites } from '../context/FavoritesContext';
+
 const Favorites = () => {
-    const [favorites, setFavorites] = useState([]);
+    const { favorites, toggleFavorite, loading } = useFavorites();
 
-    useEffect(() => {
-        fetchFavorites();
-    }, []);
-
-    const fetchFavorites = async () => {
-        try {
-            const response = await axios.get('/favorites');
-            setFavorites(response.data);
-        } catch (error) {
-            console.error('Error fetching favorites:', error);
-        }
+    const removeFavorite = async (e, productId) => {
+        e.preventDefault();
+        await toggleFavorite(productId);
     };
 
-    const removeFavorite = async (productId) => {
-        try {
-            await axios.post('/favorites', { productId });
-            setFavorites(favorites.filter(p => p.id !== productId));
-        } catch (error) {
-            console.error('Error removing favorite:', error);
-        }
-    };
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-screen bg-gray-50">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+            </div>
+        );
+    }
 
     if (favorites.length === 0) {
         return (
@@ -53,9 +46,9 @@ const Favorites = () => {
                                 <h3 className="text-xl font-semibold text-gray-800 mb-2 truncate">{product.title}</h3>
                             </Link>
                             <div className="flex justify-between items-center">
-                                <span className="text-lg font-bold text-indigo-600">${product.price.toFixed(2)}</span>
+                                <span className="text-lg font-bold text-indigo-600">₹{product.price.toLocaleString('en-IN')}</span>
                                 <button
-                                    onClick={() => removeFavorite(product.id)}
+                                    onClick={(e) => removeFavorite(e, product.id)}
                                     className="p-2 rounded-full text-red-500 bg-red-50 hover:bg-red-100 transition-colors duration-300"
                                 >
                                     <FaHeart className="w-6 h-6 animate-pulse" />
