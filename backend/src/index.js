@@ -18,6 +18,7 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/favorites', favoriteRoutes);
+app.use('/cart', cartRoutes);
 
 app.get('/', (req, res) => {
   res.send('Micro Marketplace API is running');

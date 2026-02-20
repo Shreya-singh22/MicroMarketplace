@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 // Get user's cart
 exports.getCart = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.userId;
         let cart = await prisma.cart.findUnique({
             where: { userId },
             include: {
@@ -30,7 +30,7 @@ exports.getCart = async (req, res) => {
 // Add item to cart
 exports.addToCart = async (req, res) => {
     const { productId, quantity = 1 } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     if (!productId) {
         return res.status(400).json({ error: 'Product ID is required' });
@@ -73,7 +73,7 @@ exports.addToCart = async (req, res) => {
 exports.updateCartItem = async (req, res) => {
     const { itemId } = req.params;
     const { quantity } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     if (quantity < 1) {
         return res.status(400).json({ error: 'Quantity must be at least 1' });
@@ -107,7 +107,7 @@ exports.updateCartItem = async (req, res) => {
 // Remove item from cart
 exports.removeFromCart = async (req, res) => {
     const { itemId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     try {
         // Verify item belongs to user's cart to prevent unauthorized deletion
@@ -138,7 +138,7 @@ exports.removeFromCart = async (req, res) => {
 
 // Checkout (Clear Cart)
 exports.checkout = async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     try {
         const cart = await prisma.cart.findUnique({ where: { userId } });
         if (!cart) return res.status(400).json({ error: 'Cart is empty' });
