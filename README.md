@@ -1,5 +1,8 @@
 # Micro Marketplace
 
+**🚀 Live Website:** [https://web-six-lemon-77.vercel.app](https://web-six-lemon-77.vercel.app)
+*(Backend API hosted on [Render](https://micromarket-backend-1ibh.onrender.com))*
+
 A full-stack marketplace application with Web and Mobile interfaces.
 
 ## Features
